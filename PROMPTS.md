@@ -56,10 +56,25 @@ Awalnya tombol terlihat tidak bisa diklik karena halaman belum dimuat ulang. Set
 ## US-04 Login admin
 
 **Prompt:**
+Baca AGENTS.md (aturan keamanan) dan docs/user-stories.md bagian US-04.
+
+Buat login admin dengan Supabase Auth (email dan password) yang diproses di server:
+
+1. Buat lib/supabase/auth.js berisi fungsi createAuthClient() memakai createServerClient dari @supabase/ssr dengan SUPABASE_URL dan SUPABASE_PUBLISHABLE_KEY, menyimpan sesi di cookie lewat await cookies() dari next/headers. Jangan ubah lib/supabase/server.js.
+2. Buat app/admin/actions.js ("use server") berisi Server Action login: panggil signInWithPassword. Berhasil: redirect ke /admin. Gagal: redirect ke /admin/login?error=1.
+3. Di file yang sama buat Server Action logout: panggil signOut lalu redirect ke /admin/login.
+4. Sambungkan form di app/admin/login/page.jsx ke action login. Baca searchParams (await, Next.js 16) dan jika ada error tampilkan pesan "Email atau password salah." Hapus CatatanBelumAktif dan komentar "belum berfungsi".
+5. Di components/NavAdmin.jsx, bungkus tombol Keluar dengan form yang memanggil action logout, tanpa mengubah tampilannya.
+
+Jangan ubah tampilan. Jangan buat proxy.js dulu (itu US-06). Jangan jalankan terminal, browser, atau git. Cukup ubah kodenya, saya yang tes.
 
 **Hasil:**
+AI membuat lib/supabase/auth.js (koneksi Supabase untuk login yang menyimpan sesi di cookie) dan app/admin/actions.js (Server Action login dan logout yang berjalan di server). Form login dan tombol Keluar di NavAdmin sudah tersambung. Login benar diarahkan ke /admin, login salah kembali ke halaman login dengan ?error=1 dan pesan "Email atau password salah.", tombol Keluar menghapus sesi lalu kembali ke halaman login.
+
+Saya tes: login dengan password salah muncul pesan error, login benar masuk ke /admin, klik Keluar kembali ke halaman login.
 
 **Perbaikan:**
+Tidak ada.
 
 ## US-05 Ganti password
 
