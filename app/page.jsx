@@ -65,9 +65,11 @@ export default async function HalamanKatalog({ searchParams }) {
       query = query.order("harga", { ascending: true });
     } else if (urut === "termahal") {
       query = query.order("harga", { ascending: false });
-    } else {
-      // terbaru (created_at desc)
+    } else if (urut === "terbaru") {
       query = query.order("created_at", { ascending: false });
+    } else {
+      // US-47: default mengikuti urutan yang diatur admin
+      query = query.order("urutan", { ascending: true }).order("id", { ascending: true });
     }
 
     // US-16: paginasi 12 produk per halaman memakai .range()
@@ -149,9 +151,10 @@ export default async function HalamanKatalog({ searchParams }) {
                 Urutan
                 <select
                   name="urut"
-                  defaultValue={urut || "terbaru"}
+                  defaultValue={urut || "urutan"}
                   className="w-full rounded-lg border border-garis bg-latar px-3 py-2.5 text-base text-teks focus:border-utama focus:outline-none"
                 >
+                  <option value="urutan">Pilihan toko</option>
                   <option value="terbaru">Terbaru</option>
                   <option value="termurah">Termurah</option>
                   <option value="termahal">Termahal</option>

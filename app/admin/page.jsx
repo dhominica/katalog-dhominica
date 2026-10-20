@@ -41,6 +41,7 @@ export default async function HalamanAdmin({ searchParams }) {
     let query = supabase
       .from("produk")
       .select("*", { count: "exact" })
+      .order("urutan", { ascending: true })
       .order("id", { ascending: true })
       .range((hal - 1) * PER_HALAMAN, hal * PER_HALAMAN - 1);
     if (q) {

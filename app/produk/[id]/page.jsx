@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import KartuProduk from "@/components/KartuProduk";
 import PilihPesan from "@/components/PilihPesan";
+import GaleriFoto from "@/components/GaleriFoto";
 import TombolBagikan from "@/components/TombolBagikan";
 import TombolFavorit from "@/components/TombolFavorit";
 import TombolBandingkan from "@/components/TombolBandingkan";
@@ -93,10 +94,9 @@ export default async function HalamanDetailProduk({ params }) {
       <CatatTerakhirDilihat produk={produk} />
 
       <article className="grid gap-8 py-8 md:grid-cols-2 md:py-12">
-        <img
-          src={produk.foto_url}
-          alt={produk.nama}
-          className="aspect-square w-full rounded-2xl border border-garis bg-permukaan object-cover"
+        <GaleriFoto
+          nama={produk.nama}
+          daftarFoto={[produk.foto_url, ...(Array.isArray(produk.galeri) ? produk.galeri : [])].filter(Boolean)}
         />
         <div className="flex flex-col gap-4">
           <Link

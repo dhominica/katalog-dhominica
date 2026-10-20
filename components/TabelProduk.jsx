@@ -1,7 +1,7 @@
 import { formatRupiah } from "@/lib/format";
 import Tombol from "@/components/Tombol";
 import TombolHapus from "@/components/TombolHapus";
-import { hapusProduk, ubahAktifProduk } from "@/app/admin/actions";
+import { hapusProduk, ubahAktifProduk, geserUrutan } from "@/app/admin/actions";
 
 export default function TabelProduk({ daftarProduk }) {
   return (
@@ -33,6 +33,16 @@ export default function TabelProduk({ daftarProduk }) {
               <td className="px-4 py-3">{formatRupiah(produk.harga)}</td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">
+                  {/* US-47: naikkan atau turunkan urutan tampil */}
+                  <form action={geserUrutan} className="flex gap-1">
+                    <input type="hidden" name="id" value={produk.id} />
+                    <button type="submit" name="arah" value="naik" aria-label={`Naikkan ${produk.nama}`} className="rounded-lg border border-garis px-2.5 py-2 hover:border-utama hover:text-utama">
+                      ↑
+                    </button>
+                    <button type="submit" name="arah" value="turun" aria-label={`Turunkan ${produk.nama}`} className="rounded-lg border border-garis px-2.5 py-2 hover:border-utama hover:text-utama">
+                      ↓
+                    </button>
+                  </form>
                   <Tombol href={`/admin/produk/${produk.id}/ubah`} varian="garis">
                     Ubah
                   </Tombol>

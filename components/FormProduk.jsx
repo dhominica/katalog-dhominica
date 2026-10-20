@@ -39,6 +39,12 @@ export default function FormProduk({ produk = {}, labelTombol }) {
         placeholder="https://... atau /produk/nama-file.svg"
         defaultValue={nilai.foto_url}
       />
+      <Input
+        label="Foto tambahan untuk galeri (pisahkan dengan koma)"
+        name="galeri"
+        placeholder="/produk/kopi.svg, https://..."
+        defaultValue={Array.isArray(nilai.galeri) ? nilai.galeri.join(", ") : nilai.galeri ?? ""}
+      />
       <Input label="Deskripsi" name="deskripsi" textarea defaultValue={nilai.deskripsi} />
       <div className="flex gap-3">
         <Tombol type="submit" disabled={sedangMenyimpan}>

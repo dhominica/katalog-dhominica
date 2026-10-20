@@ -220,7 +220,15 @@ Halaman /admin/akun menampilkan daftar admin dari supabase.auth.admin.listUsers(
 ### Bonus US-19, US-20, US-32, US-40, US-41 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Dengan AI cadangan (Claude Code): tambahkan kolom aktif, stok, harga_coret, badge di tabel produk dan tabel klik_whatsapp (SQL saya jalankan sendiri di Supabase SQL Editor). Buat tombol aktif/nonaktif produk di admin dan sembunyikan produk nonaktif dari halaman publik (US-32), status stok dengan penanda "Habis" dan tombol pesan disembunyikan (US-19), harga coret dan badge (US-20), pencatatan klik pesan WhatsApp tanpa data pribadi (US-40), dan 5 produk terlaris di dashboard admin (US-41).
+tambahkan kolom aktif, stok, harga_coret, badge di tabel produk dan tabel klik_whatsapp (SQL saya jalankan sendiri di Supabase SQL Editor). Buat tombol aktif/nonaktif produk di admin dan sembunyikan produk nonaktif dari halaman publik (US-32), status stok dengan penanda "Habis" dan tombol pesan disembunyikan (US-19), harga coret dan badge (US-20), pencatatan klik pesan WhatsApp tanpa data pribadi (US-40), dan 5 produk terlaris di dashboard admin (US-41).
 
 **Hasil:**
 Semua query publik memakai .eq("aktif", true) sehingga produk nonaktif tidak tampil dan halaman detailnya "tidak ditemukan". Form admin punya isian stok, harga normal (dicoret), dan badge yang divalidasi di server. Kartu dan halaman detail menampilkan harga coret, badge, dan penanda "Habis"; jika stok 0 tombol pesan diganti tulisan "Stok habis". Klik tombol WhatsApp dicatat lewat Server Action (hanya id produk dan waktu) tanpa menunggu, dan dashboard /admin menampilkan 5 produk dengan klik terbanyak atau pesan jika belum ada data.
+
+### Bonus US-18, US-45, US-47 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code): tambahkan kolom urutan dan galeri di tabel produk serta tabel log_admin (SQL saya jalankan sendiri di Supabase). Buat galeri beberapa foto di halaman detail (US-18), log aktivitas admin untuk tambah/ubah/hapus produk dengan halaman 50 log terakhir (US-45), dan tombol naik/turun urutan produk di admin yang diikuti katalog publik (US-47).
+
+**Hasil:**
+Form produk punya isian foto tambahan (dipisah koma) yang disimpan ke kolom galeri; halaman detail menampilkan foto utama dan gambar kecil yang bisa diklik, produk dengan satu foto tampil normal. Setiap tambah, ubah, hapus, aktif/nonaktif, impor, dan geser urutan mencatat email admin, aksi, dan waktu ke log_admin; halaman /admin/log menampilkan 50 log terakhir dan dilindungi login. Tabel admin punya tombol ↑ ↓ untuk menukar urutan, dan katalog publik secara bawaan diurutkan berdasarkan kolom urutan (pilihan "Pilihan toko").

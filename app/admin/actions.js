@@ -108,11 +108,22 @@ async function wajibLogin() {
   if (!user) {
     redirect("/admin/login");
   }
+  return user;
+}
+
+// US-45: catat siapa, aksi apa, dan kapan. Gagal mencatat tidak membatalkan aksi utama.
+async function catatLog(user, aksi) {
+  try {
+    const supabase = createServerClient();
+    await supabase.from("log_admin").insert({ email: user?.email ?? null, aksi });
+  } catch {
+    // Abaikan.
+  }
 }
 
 // US-08 (tambah), US-09 (ubah), US-34 (validasi di server).
 export async function simpanProduk(prevState, formData) {
-  await wajibLogin();
+  const user = await wajibLogin();
 
   const values = {
     nama: String(formData.get("nama") ?? "").trim(),
@@ -123,6 +134,7 @@ export async function simpanProduk(prevState, formData) {
     stok: String(formData.get("stok") ?? "").trim(),
     harga_coret: String(formData.get("harga_coret") ?? "").trim(),
     badge: String(formData.get("badge") ?? "").trim(),
+    galeri: String(formData.get("galeri") ?? "").trim(),
   };
   const id = formData.get("id");
 
@@ -150,6 +162,10 @@ export async function simpanProduk(prevState, formData) {
     stok,
     harga_coret: hargaCoret,
     badge: values.badge || null,
+    // US-18: foto tambahan dipisah koma
+    galeri: values.galeri
+      ? values.galeri.split(",").map((url) => url.trim()).filter(Boolean)
+      : null,
     nama: values.nama,
     harga,
     kategori: values.kategori || null,
@@ -158,6 +174,16 @@ export async function simpanProduk(prevState, formData) {
   };
 
   const supabase = createServerClient();
+  if (!id) {
+    // US-47: produk baru ditaruh di urutan paling akhir
+    const { data: terakhir } = await supabase
+      .from("produk")
+      .select("urutan")
+      .order("urutan", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    data.urutan = (terakhir?.urutan ?? 0) + 1;
+  }
   const { error } = id
     ? await supabase.from("produk").update(data).eq("id", id)
     : await supabase.from("produk").insert(data);
@@ -165,6 +191,7 @@ export async function simpanProduk(prevState, formData) {
   if (error) {
     return { errors: { umum: "Gagal menyimpan produk. Coba lagi." }, values };
   }
+  await catatLog(user, `${id ? "Mengubah" : "Menambah"} produk "${data.nama}"`);
 
   revalidatePath("/admin");
   revalidatePath("/");
@@ -173,12 +200,13 @@ export async function simpanProduk(prevState, formData) {
 
 // US-10: hapus produk.
 export async function hapusProduk(formData) {
-  await wajibLogin();
+  const user = await wajibLogin();
 
   const id = formData.get("id");
   if (id) {
     const supabase = createServerClient();
     await supabase.from("produk").delete().eq("id", id);
+    await catatLog(user, `Menghapus produk id ${id}`);
   }
 
   revalidatePath("/admin");
@@ -217,7 +245,7 @@ function pecahBarisCsv(baris) {
 
 // US-46: impor produk dari CSV. Setiap baris divalidasi, baris valid disimpan sekaligus.
 export async function imporProduk(prevState, formData) {
-  await wajibLogin();
+  const user = await wajibLogin();
 
   const berkas = formData.get("berkas");
   if (!berkas || typeof berkas.text !== "function" || berkas.size === 0) {
@@ -260,6 +288,7 @@ export async function imporProduk(prevState, formData) {
     if (error) {
       return { pesan: "Gagal menyimpan ke database. Coba lagi." };
     }
+    await catatLog(user, `Mengimpor ${valid.length} produk dari CSV`);
     revalidatePath("/admin");
     revalidatePath("/");
   }
@@ -326,13 +355,45 @@ export async function ubahStatusAdmin(formData) {
 
 // US-32: aktif atau nonaktifkan produk.
 export async function ubahAktifProduk(formData) {
-  await wajibLogin();
+  const user = await wajibLogin();
 
   const id = formData.get("id");
   const aktif = formData.get("aktif") === "true";
   if (id) {
     const supabase = createServerClient();
     await supabase.from("produk").update({ aktif }).eq("id", id);
+    await catatLog(user, `${aktif ? "Mengaktifkan" : "Menonaktifkan"} produk id ${id}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  redirect("/admin");
+}
+
+// US-47: naikkan atau turunkan urutan tampil produk (tukar dengan tetangganya).
+export async function geserUrutan(formData) {
+  const user = await wajibLogin();
+  const id = Number(formData.get("id"));
+  const arah = formData.get("arah");
+
+  const supabase = createServerClient();
+  const { data: semua } = await supabase
+    .from("produk")
+    .select("id, urutan")
+    .order("urutan", { ascending: true })
+    .order("id", { ascending: true });
+
+  const daftar = semua || [];
+  const i = daftar.findIndex((p) => p.id === id);
+  const j = arah === "naik" ? i - 1 : i + 1;
+
+  if (i >= 0 && j >= 0 && j < daftar.length) {
+    // Beri nomor urut berurutan lalu tukar posisi kedua produk.
+    const urutA = j + 1;
+    const urutB = i + 1;
+    await supabase.from("produk").update({ urutan: urutA }).eq("id", daftar[i].id);
+    await supabase.from("produk").update({ urutan: urutB }).eq("id", daftar[j].id);
+    await catatLog(user, `Menggeser produk id ${id} ${arah === "naik" ? "ke atas" : "ke bawah"}`);
   }
 
   revalidatePath("/admin");

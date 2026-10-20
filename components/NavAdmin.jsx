@@ -13,6 +13,9 @@ export default function NavAdmin() {
       <Link href="/admin/akun" className="font-semibold hover:text-utama">
         Akun admin
       </Link>
+      <Link href="/admin/log" className="font-semibold hover:text-utama">
+        Log aktivitas
+      </Link>
       <form action={logout} className="ml-auto">
         <button type="submit" className="text-teks-lembut hover:text-bahaya">
           Keluar
