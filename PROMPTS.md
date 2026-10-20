@@ -175,7 +175,7 @@ Ditambahkan mode gelap dengan tombol di header yang pilihannya diingat di localS
 
 ### Keamanan K-6, K-7, K-8, K-9, K-12, K-13
 
-**Prompt:** [SENDIRI]
+**Prompt:** 
 Baca AGENTS.md. Kerjakan pemeriksaan keamanan berikut tanpa mengubah tampilan: K-6 header keamanan di next.config.mjs (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Strict-Transport-Security). K-7 hapus dangerouslySetInnerHTML/eval, script tema dipindah ke public/tema.js. K-8 X-Robots-Tag noindex untuk /admin dan app/admin/layout.jsx dengan metadata robots noindex. K-9 app/error.jsx dengan pesan umum tanpa error.message/stack, dan pesan error umum di beranda. K-12 rate limit login 5 percobaan per 15 menit per IP. K-13 hapus semua console.log. Jangan jalankan terminal, browser, atau git.
 
 **Hasil:**
@@ -192,3 +192,11 @@ Antigravity sedang lambat/macet, jadi saya memakai AI cadangan (Claude Code) den
 
 **Hasil:**
 app/manifest.js otomatis ditautkan di halaman sehingga katalog bisa di-install ke HP. Halaman /kategori/minuman dan sejenisnya menampilkan produk kategori itu, kategori yang tidak ada menampilkan "Halaman tidak ditemukan", dan nama kategori di halaman detail bisa diklik. Di halaman detail ada tombol "Bandingkan (x/2)"; pilihan ketiga menggantikan pilihan paling lama dengan pesan, dan /bandingkan?a=..&b=.. menampilkan foto, kategori, harga, dan deskripsi berdampingan. Produk yang tidak ada menampilkan "tidak ditemukan".
+
+### Bonus US-08, US-09, US-10, US-34 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Antigravity lambat, jadi saya memakai AI cadangan (Claude Code) dengan permintaan: buat tambah, ubah, dan hapus produk di halaman admin. Setiap aksi wajib cek login di server, validasi di server (nama wajib, harga angka positif) dengan pesan error per field tanpa menghapus isian, form ubah terisi data lama dari database, dan tombol hapus meminta konfirmasi.
+
+**Hasil:**
+Di app/admin/actions.js ditambahkan simpanProduk (insert jika baru, update jika ada id) dan hapusProduk, keduanya memanggil wajibLogin() sehingga tanpa login ditolak server. FormProduk memakai useActionState sehingga pesan error tampil di bawah field yang salah dan isian tidak hilang. Halaman ubah mengambil data lama dari Supabase, dan tombol Hapus menampilkan konfirmasi "Hapus produk ini?". Setelah simpan atau hapus, halaman kembali ke /admin.
