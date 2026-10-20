@@ -39,10 +39,19 @@ Tidak ada.
 ## US-03 Pesan via WhatsApp
 
 **Prompt:**
+Baca AGENTS.md, docs/user-stories.md bagian US-03, dan docs/rancangan-teknis.md bagian "Pesan WhatsApp (US-03)".
+
+Ubah components/TombolWhatsApp.jsx supaya membuka link https://wa.me/<nomor>?text=<pesan>. Nomor diambil dari toko.nomorWhatsApp di lib/toko.js. Pesan berisi nama produk dan harga dalam format rupiah memakai formatRupiah dari lib/format.js, contoh: "Halo Dapur Domi, saya ingin memesan Kopi Bubuk Robusta 250 g (Rp 45.000). Apakah masih tersedia?". Encode pesan dengan encodeURIComponent. Ganti <button> menjadi <a> yang dibuka di tab baru dengan target="_blank" dan rel="noopener noreferrer", dengan className yang sama persis supaya tampilannya tidak berubah. Hapus komentar "belum berfungsi" di file itu.
+
+Hanya ubah components/TombolWhatsApp.jsx. Jangan jalankan terminal, browser, atau git. Cukup ubah kodenya, saya yang tes.
 
 **Hasil:**
+AI mengubah components/TombolWhatsApp.jsx. Tombol yang tadinya tidak berfungsi sekarang menjadi link wa.me yang membuka WhatsApp ke nomor toko di lib/toko.js, dengan pesan otomatis berisi nama dan harga produk. Karena nomor diambil dari lib/toko.js, kalau nomor toko berganti cukup ubah satu file itu.
+
+Saya tes: klik tombol di halaman detail produk, WhatsApp terbuka di tab baru dengan pesan berisi nama dan harga produk tersebut.
 
 **Perbaikan:**
+Awalnya tombol terlihat tidak bisa diklik karena halaman belum dimuat ulang. Setelah refresh (Ctrl + Shift + R), tombol berfungsi.
 
 ## US-04 Login admin
 
