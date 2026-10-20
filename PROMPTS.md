@@ -208,3 +208,11 @@ Dengan AI cadangan (Claude Code) karena Antigravity lambat: tambahkan pilihan ju
 
 **Hasil:**
 Halaman detail punya input jumlah dan total; pesan WhatsApp memuat jumlah. Tombol "Tambah ke keranjang" menyimpan ke localStorage, halaman /keranjang bisa mengubah jumlah, menghapus item, menghitung total, dan mengirim semua isi dalam satu pesan WhatsApp. /admin punya pencarian (.ilike) dan paginasi (.range) dengan ?q= dan ?hal= di URL. /admin/impor menerima CSV, setiap baris dicek (nama wajib, harga angka positif), baris yang salah dilaporkan dengan nomor barisnya, baris valid disimpan sekaligus, lalu ringkasan berhasil/gagal ditampilkan. Semua aksi admin memeriksa login di server.
+
+### Bonus US-44 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code): buat halaman /admin/akun untuk mengelola akun admin lewat Supabase Auth. Admin bisa melihat daftar admin, menambah admin baru, serta menonaktifkan atau menghapus admin lain tetapi tidak akunnya sendiri. Semua aksi diperiksa di server.
+
+**Hasil:**
+Halaman /admin/akun menampilkan daftar admin dari supabase.auth.admin.listUsers() (memakai secret key hanya di server). Form tambah admin memanggil auth.admin.createUser, tombol Nonaktifkan memakai ban_duration, tombol Hapus memakai deleteUser. Server menolak aksi terhadap akun sendiri dan setiap aksi memeriksa login lebih dulu.

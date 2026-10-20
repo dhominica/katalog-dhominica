@@ -252,3 +252,60 @@ export async function imporProduk(prevState, formData) {
 
   return { ringkasan: { berhasil: valid.length, gagal: kesalahan.length }, kesalahan };
 }
+
+// US-44: kelola akun admin lewat Supabase Auth (API admin memakai secret key di server).
+async function adminSaatIni() {
+  const supabase = await createAuthClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/admin/login");
+  }
+  return user;
+}
+
+export async function tambahAdmin(prevState, formData) {
+  await adminSaatIni();
+
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  if (!email.includes("@")) {
+    return { error: "Email tidak valid." };
+  }
+  if (password.length < 8) {
+    return { error: "Password minimal 8 karakter." };
+  }
+
+  const supabase = createServerClient();
+  const { error } = await supabase.auth.admin.createUser({ email, password, email_confirm: true });
+  if (error) {
+    return { error: "Gagal menambah admin. Mungkin email sudah terdaftar." };
+  }
+
+  revalidatePath("/admin/akun");
+  return { sukses: `Admin ${email} berhasil ditambahkan.` };
+}
+
+export async function ubahStatusAdmin(formData) {
+  const saya = await adminSaatIni();
+  const id = String(formData.get("id") ?? "");
+  const aksi = formData.get("aksi");
+
+  // Admin tidak boleh menonaktifkan atau menghapus akunnya sendiri.
+  if (!id || id === saya.id) {
+    redirect("/admin/akun?error=diri-sendiri");
+  }
+
+  const supabase = createServerClient();
+  if (aksi === "hapus") {
+    await supabase.auth.admin.deleteUser(id);
+  } else if (aksi === "nonaktifkan") {
+    await supabase.auth.admin.updateUserById(id, { ban_duration: "876000h" });
+  } else if (aksi === "aktifkan") {
+    await supabase.auth.admin.updateUserById(id, { ban_duration: "none" });
+  }
+
+  revalidatePath("/admin/akun");
+  redirect("/admin/akun");
+}
