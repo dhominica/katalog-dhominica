@@ -232,3 +232,11 @@ Dengan AI cadangan (Claude Code): tambahkan kolom urutan dan galeri di tabel pro
 
 **Hasil:**
 Form produk punya isian foto tambahan (dipisah koma) yang disimpan ke kolom galeri; halaman detail menampilkan foto utama dan gambar kecil yang bisa diklik, produk dengan satu foto tampil normal. Setiap tambah, ubah, hapus, aktif/nonaktif, impor, dan geser urutan mencatat email admin, aksi, dan waktu ke log_admin; halaman /admin/log menampilkan 50 log terakhir dan dilindungi login. Tabel admin punya tombol ↑ ↓ untuk menukar urutan, dan katalog publik secara bawaan diurutkan berdasarkan kolom urutan (pilihan "Pilihan toko").
+
+### Bonus US-38, US-39 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code): buat tabel ulasan (SQL saya jalankan sendiri di Supabase), form ulasan (nama, rating 1-5, komentar) di halaman detail yang disimpan lewat Server Action dengan validasi server dan perlindungan spam, daftar ulasan dan rata-rata rating, serta halaman admin untuk menyembunyikan atau menghapus ulasan.
+
+**Hasil:**
+Halaman detail menampilkan rata-rata rating, daftar ulasan, dan form ulasan. Server memvalidasi nama (maks 50), rating 1-5, dan komentar (3-500 karakter), memakai honeypot tersembunyi, dan membatasi 3 ulasan per 10 menit per IP. Halaman /admin/ulasan menampilkan semua ulasan dengan tombol Sembunyikan/Tampilkan dan Hapus yang memeriksa login di server. Ulasan yang disembunyikan tidak tampil dan tidak dihitung di rata-rata.

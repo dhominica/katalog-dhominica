@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import KartuProduk from "@/components/KartuProduk";
 import PilihPesan from "@/components/PilihPesan";
 import GaleriFoto from "@/components/GaleriFoto";
+import FormUlasan from "@/components/FormUlasan";
 import TombolBagikan from "@/components/TombolBagikan";
 import TombolFavorit from "@/components/TombolFavorit";
 import TombolBandingkan from "@/components/TombolBandingkan";
@@ -52,6 +53,7 @@ export default async function HalamanDetailProduk({ params }) {
 
   let produk = null;
   let produkTerkait = [];
+  let daftarUlasan = [];
 
   try {
     const supabase = createServerClient();
@@ -79,6 +81,15 @@ export default async function HalamanDetailProduk({ params }) {
           produkTerkait = terkait;
         }
       }
+
+      // US-38 dan US-39: hanya ulasan yang tidak disembunyikan yang tampil dan dihitung.
+      const { data: ulasan } = await supabase
+        .from("ulasan")
+        .select("id, nama, rating, komentar, created_at")
+        .eq("produk_id", id)
+        .eq("tampil", true)
+        .order("created_at", { ascending: false });
+      daftarUlasan = ulasan || [];
     }
   } catch (err) {
     // Jika koneksi gagal atau terjadi error, dianggap tidak ditemukan
@@ -150,6 +161,36 @@ export default async function HalamanDetailProduk({ params }) {
       </article>
 
       {/* US-17: Produk terkait */}
+      <section aria-labelledby="judul-ulasan" className="flex flex-col gap-4 border-t border-garis py-8">
+        <h2 id="judul-ulasan" className="text-xl font-bold">
+          Ulasan
+        </h2>
+        {daftarUlasan.length === 0 ? (
+          <p className="text-sm text-teks-lembut">Belum ada ulasan. Jadilah yang pertama.</p>
+        ) : (
+          <>
+            <p className="text-sm">
+              <span className="text-lg font-bold">
+                {(daftarUlasan.reduce((n, u) => n + u.rating, 0) / daftarUlasan.length).toFixed(1)}
+              </span>{" "}
+              / 5 dari {daftarUlasan.length} ulasan
+            </p>
+            <ul className="flex flex-col gap-3">
+              {daftarUlasan.map((u) => (
+                <li key={u.id} className="rounded-xl border border-garis p-3 text-sm">
+                  <p className="font-semibold">
+                    {u.nama} <span className="text-harga">{"★".repeat(u.rating)}</span>
+                  </p>
+                  <p className="mt-1 text-teks-lembut">{u.komentar}</p>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+        <h3 className="font-semibold">Tulis ulasan</h3>
+        <FormUlasan produkId={produk.id} />
+      </section>
+
       {produkTerkait.length > 0 && (
         <section aria-labelledby="judul-terkait" className="border-t border-garis py-10">
           <h2 id="judul-terkait" className="text-xl font-bold">

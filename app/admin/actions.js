@@ -400,3 +400,23 @@ export async function geserUrutan(formData) {
   revalidatePath("/");
   redirect("/admin");
 }
+
+// US-39: sembunyikan, tampilkan, atau hapus ulasan.
+export async function moderasiUlasan(formData) {
+  const user = await wajibLogin();
+  const id = formData.get("id");
+  const aksi = formData.get("aksi");
+
+  if (id) {
+    const supabase = createServerClient();
+    if (aksi === "hapus") {
+      await supabase.from("ulasan").delete().eq("id", id);
+    } else {
+      await supabase.from("ulasan").update({ tampil: aksi === "tampilkan" }).eq("id", id);
+    }
+    await catatLog(user, `Moderasi ulasan id ${id}: ${aksi}`);
+  }
+
+  revalidatePath("/admin/ulasan");
+  redirect("/admin/ulasan");
+}
