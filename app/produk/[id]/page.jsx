@@ -6,6 +6,39 @@ import { createServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+
+  try {
+    const supabase = createServerClient();
+    const { data: produk } = await supabase
+      .from("produk")
+      .select("nama, deskripsi, foto_url")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (!produk) {
+      return {
+        title: "Produk tidak ditemukan",
+      };
+    }
+
+    return {
+      title: produk.nama,
+      description: produk.deskripsi,
+      openGraph: {
+        title: produk.nama,
+        description: produk.deskripsi,
+        images: produk.foto_url ? [produk.foto_url] : [],
+      },
+    };
+  } catch (err) {
+    return {
+      title: "Produk",
+    };
+  }
+}
+
 export default async function HalamanDetailProduk({ params }) {
   const { id } = await params;
 

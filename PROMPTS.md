@@ -117,4 +117,19 @@ Saya ubah proxy.js: sebelumnya kalau environment variable Supabase tidak ada, ha
 
 ## Debugging dan fitur bonus
 
-Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
+### Bonus US-22, US-26, US-27, US-28
+
+**Prompt:** 
+Baca AGENTS.md dan docs/user-stories.md bagian US-22, US-26, US-27, US-28. Kerjakan keempatnya:
+
+US-22: buat app/tentang/page.jsx berisi profil toko, alamat, jam buka, dan kontak WhatsApp dari lib/toko.js. Tambahkan tautan "Tentang" di components/Footer.jsx.
+US-26: di app/produk/[id]/page.jsx tambahkan generateMetadata (await params) yang mengambil produk dari Supabase lewat lib/supabase/server.js: title = nama produk, description = deskripsi, openGraph berisi title dan images foto_url.
+US-27: buat app/sitemap.js yang mengambil semua id produk dari Supabase dan memuat URL beranda, /tentang, dan /produk/[id]. Buat app/robots.js yang mengizinkan semua halaman kecuali /admin dan menunjuk ke sitemap. Base URL dari process.env.VERCEL_PROJECT_PRODUCTION_URL (tambahkan https://), fallback http://localhost:3000.
+US-28: pastikan app/not-found.jsx punya tautan kembali ke beranda. Buat app/loading.jsx dan app/produk/[id]/loading.jsx berupa skeleton sederhana sesuai DESIGN.md.
+
+Jangan ubah tampilan yang sudah ada. Jangan jalankan terminal, browser, atau git.
+
+**Hasil:**
+AI membuat halaman /tentang (ditautkan di footer), generateMetadata di halaman detail sehingga judul dan foto produk muncul saat link dibagikan, sitemap.xml dari database dan robots.txt yang melarang /admin, serta loading skeleton di beranda dan halaman detail.
+
+Prompt bonus diberi tanda [SENDIRI] karena worksheet bilang prompt bonus memang ditulis sendiri, nggak ada di lembar kerja.
