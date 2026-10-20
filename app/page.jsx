@@ -31,6 +31,7 @@ export default async function HalamanKatalog({ searchParams }) {
   let totalProduk = 0;
   let daftarKategori = ["Bumbu", "Camilan", "Kain", "Kerajinan", "Kue kering", "Minuman"];
   let errorPesan = null;
+  let daftarBanner = [];
 
   const dari = (hal - 1) * ITEM_PER_HALAMAN;
   const sampai = dari + ITEM_PER_HALAMAN - 1;
@@ -48,6 +49,14 @@ export default async function HalamanKatalog({ searchParams }) {
         daftarKategori = kategoriUnik;
       }
     }
+
+    // US-42: banner aktif dari database
+    const { data: bannerData } = await supabase
+      .from("banner")
+      .select("*")
+      .eq("aktif", true)
+      .order("created_at", { ascending: false });
+    daftarBanner = bannerData || [];
 
     // Bangun query Supabase (US-11, US-15, US-16)
     let query = supabase.from("produk").select("*", { count: "exact" }).eq("aktif", true);
@@ -109,6 +118,20 @@ export default async function HalamanKatalog({ searchParams }) {
         <p className="mt-3 max-w-xl text-lg text-teks-lembut">{toko.tagline}</p>
         <p className="mt-4 text-sm text-teks-lembut">{toko.jamBuka}</p>
       </section>
+
+      {daftarBanner.map((b) => (
+        <a
+          key={b.id}
+          href={b.tautan || "#judul-produk"}
+          className="mb-6 flex flex-col gap-3 overflow-hidden rounded-2xl border border-garis bg-permukaan p-5 sm:flex-row sm:items-center"
+        >
+          {b.gambar_url && <img src={b.gambar_url} alt="" className="h-24 w-24 rounded-xl object-cover" />}
+          <div>
+            <p className="text-lg font-extrabold text-utama">{b.judul}</p>
+            {b.teks && <p className="text-sm text-teks-lembut">{b.teks}</p>}
+          </div>
+        </a>
+      ))}
 
       <section aria-labelledby="judul-produk" className="flex flex-col gap-6 pb-16">
         <div className="flex flex-col gap-4">

@@ -228,7 +228,7 @@ Semua query publik memakai .eq("aktif", true) sehingga produk nonaktif tidak tam
 ### Bonus US-18, US-45, US-47 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Dengan AI cadangan (Claude Code): tambahkan kolom urutan dan galeri di tabel produk serta tabel log_admin (SQL saya jalankan sendiri di Supabase). Buat galeri beberapa foto di halaman detail (US-18), log aktivitas admin untuk tambah/ubah/hapus produk dengan halaman 50 log terakhir (US-45), dan tombol naik/turun urutan produk di admin yang diikuti katalog publik (US-47).
+tambahkan kolom urutan dan galeri di tabel produk serta tabel log_admin (SQL saya jalankan sendiri di Supabase). Buat galeri beberapa foto di halaman detail (US-18), log aktivitas admin untuk tambah/ubah/hapus produk dengan halaman 50 log terakhir (US-45), dan tombol naik/turun urutan produk di admin yang diikuti katalog publik (US-47).
 
 **Hasil:**
 Form produk punya isian foto tambahan (dipisah koma) yang disimpan ke kolom galeri; halaman detail menampilkan foto utama dan gambar kecil yang bisa diklik, produk dengan satu foto tampil normal. Setiap tambah, ubah, hapus, aktif/nonaktif, impor, dan geser urutan mencatat email admin, aksi, dan waktu ke log_admin; halaman /admin/log menampilkan 50 log terakhir dan dilindungi login. Tabel admin punya tombol ↑ ↓ untuk menukar urutan, dan katalog publik secara bawaan diurutkan berdasarkan kolom urutan (pilihan "Pilihan toko").
@@ -236,7 +236,15 @@ Form produk punya isian foto tambahan (dipisah koma) yang disimpan ke kolom gale
 ### Bonus US-38, US-39 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Dengan AI cadangan (Claude Code): buat tabel ulasan (SQL saya jalankan sendiri di Supabase), form ulasan (nama, rating 1-5, komentar) di halaman detail yang disimpan lewat Server Action dengan validasi server dan perlindungan spam, daftar ulasan dan rata-rata rating, serta halaman admin untuk menyembunyikan atau menghapus ulasan.
+buat tabel ulasan (SQL saya jalankan sendiri di Supabase), form ulasan (nama, rating 1-5, komentar) di halaman detail yang disimpan lewat Server Action dengan validasi server dan perlindungan spam, daftar ulasan dan rata-rata rating, serta halaman admin untuk menyembunyikan atau menghapus ulasan.
 
 **Hasil:**
 Halaman detail menampilkan rata-rata rating, daftar ulasan, dan form ulasan. Server memvalidasi nama (maks 50), rating 1-5, dan komentar (3-500 karakter), memakai honeypot tersembunyi, dan membatasi 3 ulasan per 10 menit per IP. Halaman /admin/ulasan menampilkan semua ulasan dengan tombol Sembunyikan/Tampilkan dan Hapus yang memeriksa login di server. Ulasan yang disembunyikan tidak tampil dan tidak dihitung di rata-rata.
+
+### Bonus US-42 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code): buat tabel banner (SQL saya jalankan sendiri), halaman /admin/banner untuk membuat, mengubah, dan menonaktifkan banner (judul, teks, gambar, tautan) dengan login dicek di server, dan tampilkan banner aktif di beranda.
+
+**Hasil:**
+Halaman /admin/banner punya form buat dan ubah banner dengan pilihan aktif. Server Action simpanBanner memeriksa login, memvalidasi judul dan tautan, lalu mencatat log. Beranda hanya menampilkan banner dengan aktif = true dari database.

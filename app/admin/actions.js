@@ -420,3 +420,36 @@ export async function moderasiUlasan(formData) {
   revalidatePath("/admin/ulasan");
   redirect("/admin/ulasan");
 }
+
+// US-42: buat, ubah, dan aktif/nonaktifkan banner promo.
+export async function simpanBanner(prevState, formData) {
+  const user = await wajibLogin();
+
+  const id = formData.get("id");
+  const data = {
+    judul: String(formData.get("judul") ?? "").trim(),
+    teks: String(formData.get("teks") ?? "").trim() || null,
+    gambar_url: String(formData.get("gambar_url") ?? "").trim() || null,
+    tautan: String(formData.get("tautan") ?? "").trim() || null,
+    aktif: formData.get("aktif") === "on",
+  };
+  if (!data.judul) {
+    return { error: "Judul banner wajib diisi." };
+  }
+  if (data.tautan && !data.tautan.startsWith("/") && !data.tautan.startsWith("https://")) {
+    return { error: "Tautan harus diawali / atau https://." };
+  }
+
+  const supabase = createServerClient();
+  const { error } = id
+    ? await supabase.from("banner").update(data).eq("id", id)
+    : await supabase.from("banner").insert(data);
+  if (error) {
+    return { error: "Gagal menyimpan banner." };
+  }
+
+  await catatLog(user, `${id ? "Mengubah" : "Membuat"} banner "${data.judul}"`);
+  revalidatePath("/");
+  revalidatePath("/admin/banner");
+  return { sukses: "Banner tersimpan." };
+}

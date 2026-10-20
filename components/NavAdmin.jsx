@@ -13,6 +13,9 @@ export default function NavAdmin() {
       <Link href="/admin/akun" className="font-semibold hover:text-utama">
         Akun admin
       </Link>
+      <Link href="/admin/banner" className="font-semibold hover:text-utama">
+        Banner
+      </Link>
       <Link href="/admin/ulasan" className="font-semibold hover:text-utama">
         Ulasan
       </Link>
