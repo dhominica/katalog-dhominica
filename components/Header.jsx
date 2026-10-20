@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { toko } from "@/lib/toko";
+import TombolTema from "@/components/TombolTema";
 
 export default function Header() {
   return (
@@ -8,6 +9,15 @@ export default function Header() {
         <Link href="/" className="text-lg font-extrabold tracking-tight text-utama">
           {toko.nama}
         </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/favorit"
+            className="text-sm font-semibold text-teks-lembut transition-colors hover:text-utama"
+          >
+            Favorit
+          </Link>
+          <TombolTema />
+        </div>
       </div>
     </header>
   );

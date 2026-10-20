@@ -156,3 +156,19 @@ Pakai komponen Input dan Tombol yang ada, gaya sesuai DESIGN.md. Tetap pakai Kar
 
 **Hasil:**
 Beranda sekarang punya kotak pencarian nama produk, pilihan kategori, dan pilihan urutan (terbaru, termurah, termahal). Produk dibagi 12 per halaman dengan tombol Sebelumnya/Berikutnya dan tulisan "Halaman X dari Y". Semua penyaringan, urutan, dan pembatasan jumlah dilakukan langsung di query database (.ilike, .eq, .order, .range), bukan hanya disembunyikan di tampilan.
+
+### Bonus US-17, US-23, US-24, US-25, US-36
+
+**Prompt:**
+Baca AGENTS.md, DESIGN.md, dan docs/user-stories.md bagian US-17, US-23, US-24, US-25, US-36. Kerjakan kelimanya. Komponen "use client" TIDAK boleh berisi Supabase.
+
+US-25 mode gelap: di app/globals.css tambahkan blok html[data-theme="dark"] yang mengganti semua variabel warna --color-* dengan versi gelap yang tetap terbaca. Buat components/TombolTema.jsx ("use client") untuk berpindah terang/gelap, simpan pilihan di localStorage, pasang di components/Header.jsx. Di app/layout.jsx tambahkan script kecil di <head> yang menerapkan tema tersimpan sebelum halaman tampil, dan suppressHydrationWarning di <html>.
+US-23: buat components/TombolBagikan.jsx ("use client") di halaman detail produk: pakai navigator.share jika ada, kalau tidak salin link dengan navigator.clipboard, lalu tampilkan "Link tersalin".
+US-17: di app/produk/[id]/page.jsx tampilkan "Produk terkait": maksimal 4 produk lain dari kategori yang sama, diambil dari Supabase di server (.eq kategori, .neq id, .limit 4), pakai KartuProduk.
+US-24: buat components/TombolFavorit.jsx ("use client") di halaman detail yang menyimpan produk (id, nama, harga, foto_url) ke localStorage "favorit". Buat halaman app/favorit/page.jsx yang menampilkan produk favorit dari localStorage lewat komponen client, dengan pesan jika kosong. Tambahkan tautan "Favorit" di Header.
+US-36: buat components/CatatTerakhirDilihat.jsx ("use client") di halaman detail yang menyimpan produk ke localStorage "terakhir_dilihat" (maksimal 6, tanpa duplikat). Buat components/TerakhirDilihat.jsx ("use client") di beranda app/page.jsx yang menampilkan bagian "Terakhir dilihat" dan tidak tampil jika kosong.
+
+Jangan ubah fitur lain. Jangan jalankan terminal, browser, atau git.
+
+**Hasil:**
+Ditambahkan mode gelap dengan tombol di header yang pilihannya diingat di localStorage, tombol bagikan/salin link di halaman detail, bagian "Produk terkait" dari kategori yang sama (diambil dari database di server), tombol favorit dengan halaman /favorit, dan bagian "Terakhir dilihat" di beranda. Fitur favorit, terakhir dilihat, dan tema disimpan di localStorage browser sehingga komponennya memakai "use client", tanpa Supabase di dalamnya.

@@ -1,6 +1,7 @@
 import KartuProduk from "@/components/KartuProduk";
 import Input from "@/components/Input";
 import Tombol from "@/components/Tombol";
+import TerakhirDilihat from "@/components/TerakhirDilihat";
 import { toko } from "@/lib/toko";
 import { createServerClient } from "@/lib/supabase/server";
 
@@ -217,6 +218,10 @@ export default async function HalamanKatalog({ searchParams }) {
           </>
         )}
       </section>
+
+      <div className="pb-16">
+        <TerakhirDilihat />
+      </div>
     </>
   );
 }
