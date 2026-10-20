@@ -79,10 +79,22 @@ Tidak ada.
 ## US-05 Ganti password
 
 **Prompt:**
+Baca AGENTS.md dan docs/user-stories.md bagian US-05.
+
+Di app/admin/actions.js tambahkan Server Action gantiPassword memakai createAuthClient dari lib/supabase/auth.js:
+1. Cek admin sudah login dengan supabase.auth.getUser(). Kalau belum, redirect ke /admin/login.
+2. Validasi di server: password_baru minimal 8 karakter dan harus sama dengan konfirmasi_password. Kalau tidak valid, redirect ke /admin/password?error=pendek atau ?error=beda.
+3. Panggil supabase.auth.updateUser({ password }). Gagal: redirect ke /admin/password?error=gagal. Berhasil: redirect ke /admin/password?sukses=1.
+
+Sambungkan form di app/admin/password/page.jsx ke action itu. Baca searchParams (await) dan tampilkan pesan yang jelas: "Password minimal 8 karakter.", "Konfirmasi password tidak sama.", "Gagal mengganti password.", atau "Password berhasil diganti." Hapus CatatanBelumAktif dan komentar "belum berfungsi". Jangan ubah tampilan form.
+
+Hanya ubah app/admin/actions.js dan app/admin/password/page.jsx. Jangan jalankan terminal, browser, atau git. Cukup ubah kodenya, saya yang tes.
 
 **Hasil:**
+AI menambahkan Server Action gantiPassword di app/admin/actions.js. Sebelum mengganti password, server memeriksa 3 hal: admin sudah login, password minimal 8 karakter, dan password sama dengan konfirmasinya. Kalau lolos, password diganti di Supabase lewat updateUser. Hasilnya dikirim lewat URL (?sukses=1 atau ?error=...) lalu halaman menampilkan pesan berhasil atau error.
 
 **Perbaikan:**
+Awalnya kode belum masuk karena perubahan AI belum selesai/di-accept. Setelah di-accept, form tersambung.
 
 ## US-06 Proteksi halaman admin
 
