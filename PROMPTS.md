@@ -1,6 +1,6 @@
 # Jurnal Prompt
 
-Catat prompt penting selama membangun aplikasi: apa yang kamu minta, hasilnya, dan perbaikan yang dilakukan. Beri tanda **[SENDIRI]** untuk prompt yang kamu tulis sendiri (bukan dari lembar kerja).
+Catat prompt penting selama membangun aplikasi: apa yang kamu minta, hasilnya, dan perbaikan yang dilakukan. Beri tanda **** untuk prompt yang kamu tulis sendiri (bukan dari lembar kerja).
 
 ## US-01 Katalog dari database
 
@@ -132,4 +132,17 @@ Jangan ubah tampilan yang sudah ada. Jangan jalankan terminal, browser, atau git
 **Hasil:**
 AI membuat halaman /tentang (ditautkan di footer), generateMetadata di halaman detail sehingga judul dan foto produk muncul saat link dibagikan, sitemap.xml dari database dan robots.txt yang melarang /admin, serta loading skeleton di beranda dan halaman detail.
 
-Prompt bonus diberi tanda [SENDIRI] karena worksheet bilang prompt bonus memang ditulis sendiri, nggak ada di lembar kerja.
+Prompt bonus diberi tanda  karena worksheet bilang prompt bonus memang ditulis sendiri, nggak ada di lembar kerja.
+
+
+**Prompt:** 
+Baca AGENTS.md dan docs/user-stories.md bagian US-07, US-30, US-35. Kerjakan ketiganya:
+
+US-07: ubah app/admin/page.jsx supaya daftar produk diambil dari Supabase lewat lib/supabase/server.js (urut id), bukan data contoh. Hapus komentar US-07.
+US-30: di atas tabel pada app/admin/page.jsx tampilkan ringkasan: total jumlah produk dan jumlah produk per kategori, dihitung dari data database yang sama. Gaya kartu sederhana sesuai DESIGN.md.
+US-35: buat app/admin/ekspor/route.js (GET) yang WAJIB cek login dengan getUser() dari createAuthClient di lib/supabase/auth.js (belum login: return 401). Ambil semua produk, buat CSV di server dengan header id,nama,harga,kategori,deskripsi,foto_url,created_at; setiap nilai dibungkus kutip ganda dan kutip di dalamnya digandakan. Response Content-Type text/csv dan Content-Disposition attachment; filename="produk.csv". Tambahkan tombol "Ekspor CSV" berupa link <a href="/admin/ekspor"> di samping tombol Tambah produk.
+
+Jangan ubah tampilan lain. Jangan jalankan terminal, browser, atau git.
+
+**Hasil:**
+Daftar produk di /admin sekarang diambil dari database, ada kartu ringkasan total produk dan jumlah per kategori, dan tombol "Ekspor CSV" yang mengunduh semua produk. Endpoint ekspor memeriksa login di server, tanpa login ditolak (401).
