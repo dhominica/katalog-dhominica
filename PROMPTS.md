@@ -99,10 +99,21 @@ Awalnya kode belum masuk karena perubahan AI belum selesai/di-accept. Setelah di
 ## US-06 Proteksi halaman admin
 
 **Prompt:**
+Baca AGENTS.md (aturan keamanan nomor 3 dan 4) dan docs/user-stories.md bagian US-06.
+
+Buat proxy.js di root proyek (Next.js 16, pengganti middleware.js, export function proxy(request)). Di dalamnya buat client Supabase dengan createServerClient dari @supabase/ssr memakai SUPABASE_URL dan SUPABASE_PUBLISHABLE_KEY, membaca dan menulis cookie dari request/response. Panggil supabase.auth.getUser(). Semua rute /admin kecuali /admin/login wajib login: kalau belum login, redirect ke /admin/login. Kalau sudah login dan membuka /admin/login, redirect ke /admin. Pasang config matcher hanya untuk /admin/:path*.
+
+Pastikan setiap Server Action yang mengubah data di app/admin/actions.js memeriksa login di server dengan getUser() (gantiPassword sudah, cek ulang). Hapus CatatanBelumAktif dan komentar "US-06" dari app/admin/page.jsx tanpa mengubah tampilan lainnya.
+
+Hanya buat proxy.js dan ubah app/admin/page.jsx (dan actions.js jika perlu). Jangan jalankan terminal, browser, atau git. Cukup ubah kodenya, saya yang tes.
 
 **Hasil:**
+AI membuat proxy.js di root proyek sebagai "satpam" untuk semua halaman /admin. Proxy memeriksa cookie login lewat getUser(): kalau belum login dialihkan ke /admin/login, kalau sudah login dan membuka /admin/login dialihkan ke /admin. Server Action gantiPassword juga memeriksa login di server, jadi pengamanannya dua lapis.
+
+Saya tes di jendela penyamaran: /admin dan /admin/password dialihkan ke halaman login.
 
 **Perbaikan:**
+Saya ubah proxy.js: sebelumnya kalau environment variable Supabase tidak ada, halaman admin dibiarkan terbuka. Saya ganti agar mengembalikan error 500 supaya halaman admin tetap tertutup. Sempat salah karena blok if ikut terhapus sehingga semua halaman admin error, lalu saya kembalikan if-nya.
 
 ## Debugging dan fitur bonus
 
