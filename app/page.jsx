@@ -39,7 +39,7 @@ export default async function HalamanKatalog({ searchParams }) {
     const supabase = createServerClient();
 
     // Ambil daftar kategori unik dari produk
-    const { data: katData } = await supabase.from("produk").select("kategori");
+    const { data: katData } = await supabase.from("produk").select("kategori").eq("aktif", true);
     if (katData && katData.length > 0) {
       const kategoriUnik = Array.from(
         new Set(katData.map((item) => item.kategori).filter(Boolean))
@@ -50,7 +50,7 @@ export default async function HalamanKatalog({ searchParams }) {
     }
 
     // Bangun query Supabase (US-11, US-15, US-16)
-    let query = supabase.from("produk").select("*", { count: "exact" });
+    let query = supabase.from("produk").select("*", { count: "exact" }).eq("aktif", true);
 
     // US-11: pencarian nama (q) dan filter kategori
     if (q) {

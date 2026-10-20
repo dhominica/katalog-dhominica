@@ -16,6 +16,7 @@ export default async function HalamanAdmin({ searchParams }) {
   let daftarProduk = [];
   let totalCocok = 0;
   let semuaKategori = [];
+  let terlaris = [];
 
   try {
     const supabase = createServerClient();
@@ -23,6 +24,18 @@ export default async function HalamanAdmin({ searchParams }) {
     // US-30: ringkasan dihitung dari seluruh produk.
     const { data: ringkas } = await supabase.from("produk").select("kategori");
     semuaKategori = ringkas || [];
+
+    // US-41: 5 produk dengan klik pesan WhatsApp terbanyak, dihitung dari tabel klik_whatsapp.
+    const { data: klik } = await supabase.from("klik_whatsapp").select("produk_id, produk(nama)");
+    const hitung = {};
+    for (const k of klik || []) {
+      if (!k.produk_id) continue;
+      hitung[k.produk_id] ??= { nama: k.produk?.nama ?? `Produk ${k.produk_id}`, jumlah: 0 };
+      hitung[k.produk_id].jumlah += 1;
+    }
+    terlaris = Object.values(hitung)
+      .sort((x, y) => y.jumlah - x.jumlah)
+      .slice(0, 5);
 
     // US-33: pencarian dan paginasi dilakukan di query database.
     let query = supabase
@@ -83,6 +96,23 @@ export default async function HalamanAdmin({ searchParams }) {
             <p className="mt-1 text-2xl font-extrabold text-teks">{jumlah}</p>
           </div>
         ))}
+      </section>
+
+      <section aria-labelledby="judul-terlaris" className="flex flex-col gap-2">
+        <h2 id="judul-terlaris" className="text-lg font-bold">
+          Produk terlaris (klik pesan WhatsApp)
+        </h2>
+        {terlaris.length === 0 ? (
+          <p className="text-sm text-teks-lembut">Belum ada data klik pesan WhatsApp.</p>
+        ) : (
+          <ol className="list-decimal pl-5 text-sm">
+            {terlaris.map((p) => (
+              <li key={p.nama}>
+                {p.nama}: {p.jumlah} klik
+              </li>
+            ))}
+          </ol>
+        )}
       </section>
 
       <form method="GET" action="/admin" className="flex max-w-md gap-2">

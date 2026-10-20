@@ -77,5 +77,5 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
 - **Nama usaha:** Dapur Domi, camilan dan kopi rumahan di Kota Batam, dipesan lewat WhatsApp.
 - **Pembuat:** Dhominica Riskana (GitHub: dhominica)
 - **Link aplikasi:** https://katalog-dhominica.vercel.app
-- **Fitur bonus yang dikerjakan:** US-07, US-08, US-09, US-10, US-11, US-12, US-13, US-15, US-16, US-17, US-21, US-22, US-23, US-24, US-25, US-26, US-27, US-28, US-30, US-33, US-34, US-35, US-36, US-37, US-44, US-46, US-49
+- **Fitur bonus yang dikerjakan:** US-07, US-08, US-09, US-10, US-11, US-12, US-13, US-15, US-16, US-17, US-19, US-20, US-21, US-22, US-23, US-24, US-25, US-26, US-27, US-28, US-30, US-32, US-33, US-34, US-35, US-36, US-37, US-40, US-41, US-44, US-46, US-49
 - **Keamanan lanjutan:** K-6, K-7, K-8, K-9, K-10, K-12, K-13

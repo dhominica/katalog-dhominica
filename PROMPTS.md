@@ -204,7 +204,7 @@ Di app/admin/actions.js ditambahkan simpanProduk (insert jika baru, update jika 
 ### Bonus US-12, US-21, US-33, US-46 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Dengan AI cadangan (Claude Code) karena Antigravity lambat: tambahkan pilihan jumlah di halaman detail yang ikut tertulis di pesan WhatsApp (US-12), keranjang di browser dengan ubah jumlah, hapus item, total, dan satu tombol kirim semua via WhatsApp (US-21), kolom cari dan paginasi di /admin lewat query database dengan kata kunci dan halaman di URL (US-33), serta impor produk dari CSV dengan validasi per baris, laporan nomor baris yang salah, dan ringkasan hasil (US-46).
+tambahkan pilihan jumlah di halaman detail yang ikut tertulis di pesan WhatsApp (US-12), keranjang di browser dengan ubah jumlah, hapus item, total, dan satu tombol kirim semua via WhatsApp (US-21), kolom cari dan paginasi di /admin lewat query database dengan kata kunci dan halaman di URL (US-33), serta impor produk dari CSV dengan validasi per baris, laporan nomor baris yang salah, dan ringkasan hasil (US-46).
 
 **Hasil:**
 Halaman detail punya input jumlah dan total; pesan WhatsApp memuat jumlah. Tombol "Tambah ke keranjang" menyimpan ke localStorage, halaman /keranjang bisa mengubah jumlah, menghapus item, menghitung total, dan mengirim semua isi dalam satu pesan WhatsApp. /admin punya pencarian (.ilike) dan paginasi (.range) dengan ?q= dan ?hal= di URL. /admin/impor menerima CSV, setiap baris dicek (nama wajib, harga angka positif), baris yang salah dilaporkan dengan nomor barisnya, baris valid disimpan sekaligus, lalu ringkasan berhasil/gagal ditampilkan. Semua aksi admin memeriksa login di server.
@@ -212,7 +212,15 @@ Halaman detail punya input jumlah dan total; pesan WhatsApp memuat jumlah. Tombo
 ### Bonus US-44 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Dengan AI cadangan (Claude Code): buat halaman /admin/akun untuk mengelola akun admin lewat Supabase Auth. Admin bisa melihat daftar admin, menambah admin baru, serta menonaktifkan atau menghapus admin lain tetapi tidak akunnya sendiri. Semua aksi diperiksa di server.
+buat halaman /admin/akun untuk mengelola akun admin lewat Supabase Auth. Admin bisa melihat daftar admin, menambah admin baru, serta menonaktifkan atau menghapus admin lain tetapi tidak akunnya sendiri. Semua aksi diperiksa di server.
 
 **Hasil:**
 Halaman /admin/akun menampilkan daftar admin dari supabase.auth.admin.listUsers() (memakai secret key hanya di server). Form tambah admin memanggil auth.admin.createUser, tombol Nonaktifkan memakai ban_duration, tombol Hapus memakai deleteUser. Server menolak aksi terhadap akun sendiri dan setiap aksi memeriksa login lebih dulu.
+
+### Bonus US-19, US-20, US-32, US-40, US-41 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code): tambahkan kolom aktif, stok, harga_coret, badge di tabel produk dan tabel klik_whatsapp (SQL saya jalankan sendiri di Supabase SQL Editor). Buat tombol aktif/nonaktif produk di admin dan sembunyikan produk nonaktif dari halaman publik (US-32), status stok dengan penanda "Habis" dan tombol pesan disembunyikan (US-19), harga coret dan badge (US-20), pencatatan klik pesan WhatsApp tanpa data pribadi (US-40), dan 5 produk terlaris di dashboard admin (US-41).
+
+**Hasil:**
+Semua query publik memakai .eq("aktif", true) sehingga produk nonaktif tidak tampil dan halaman detailnya "tidak ditemukan". Form admin punya isian stok, harga normal (dicoret), dan badge yang divalidasi di server. Kartu dan halaman detail menampilkan harga coret, badge, dan penanda "Habis"; jika stok 0 tombol pesan diganti tulisan "Stok habis". Klik tombol WhatsApp dicatat lewat Server Action (hanya id produk dan waktu) tanpa menunggu, dan dashboard /admin menampilkan 5 produk dengan klik terbanyak atau pesan jika belum ada data.

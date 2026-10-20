@@ -120,6 +120,9 @@ export async function simpanProduk(prevState, formData) {
     kategori: String(formData.get("kategori") ?? "").trim(),
     foto_url: String(formData.get("foto_url") ?? "").trim(),
     deskripsi: String(formData.get("deskripsi") ?? "").trim(),
+    stok: String(formData.get("stok") ?? "").trim(),
+    harga_coret: String(formData.get("harga_coret") ?? "").trim(),
+    badge: String(formData.get("badge") ?? "").trim(),
   };
   const id = formData.get("id");
 
@@ -131,11 +134,22 @@ export async function simpanProduk(prevState, formData) {
   if (!values.harga || !Number.isInteger(harga) || harga <= 0) {
     errors.harga = "Harga harus berupa angka bulat lebih dari 0.";
   }
+  const stok = values.stok === "" ? 0 : Number(values.stok);
+  if (!Number.isInteger(stok) || stok < 0) {
+    errors.stok = "Stok harus angka bulat 0 atau lebih.";
+  }
+  const hargaCoret = values.harga_coret === "" ? null : Number(values.harga_coret);
+  if (hargaCoret !== null && (!Number.isInteger(hargaCoret) || hargaCoret <= harga)) {
+    errors.harga_coret = "Harga normal harus lebih besar dari harga jual.";
+  }
   if (Object.keys(errors).length > 0) {
     return { errors, values };
   }
 
   const data = {
+    stok,
+    harga_coret: hargaCoret,
+    badge: values.badge || null,
     nama: values.nama,
     harga,
     kategori: values.kategori || null,
@@ -308,4 +322,20 @@ export async function ubahStatusAdmin(formData) {
 
   revalidatePath("/admin/akun");
   redirect("/admin/akun");
+}
+
+// US-32: aktif atau nonaktifkan produk.
+export async function ubahAktifProduk(formData) {
+  await wajibLogin();
+
+  const id = formData.get("id");
+  const aktif = formData.get("aktif") === "true";
+  if (id) {
+    const supabase = createServerClient();
+    await supabase.from("produk").update({ aktif }).eq("id", id);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  redirect("/admin");
 }

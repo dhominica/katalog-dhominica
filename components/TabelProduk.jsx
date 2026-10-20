@@ -1,7 +1,7 @@
 import { formatRupiah } from "@/lib/format";
 import Tombol from "@/components/Tombol";
 import TombolHapus from "@/components/TombolHapus";
-import { hapusProduk } from "@/app/admin/actions";
+import { hapusProduk, ubahAktifProduk } from "@/app/admin/actions";
 
 export default function TabelProduk({ daftarProduk }) {
   return (
@@ -24,6 +24,9 @@ export default function TabelProduk({ daftarProduk }) {
                 <div className="flex items-center gap-3">
                   <img src={produk.foto_url} alt="" className="h-10 w-10 rounded-md object-cover" />
                   <span className="font-semibold">{produk.nama}</span>
+                  {produk.aktif === false && (
+                    <span className="rounded-full border border-garis px-2 py-0.5 text-xs text-teks-lembut">Nonaktif</span>
+                  )}
                 </div>
               </td>
               <td className="px-4 py-3 text-teks-lembut">{produk.kategori}</td>
@@ -33,6 +36,14 @@ export default function TabelProduk({ daftarProduk }) {
                   <Tombol href={`/admin/produk/${produk.id}/ubah`} varian="garis">
                     Ubah
                   </Tombol>
+                  {/* US-32: aktif atau nonaktifkan produk */}
+                  <form action={ubahAktifProduk}>
+                    <input type="hidden" name="id" value={produk.id} />
+                    <input type="hidden" name="aktif" value={produk.aktif === false ? "true" : "false"} />
+                    <Tombol type="submit" varian="garis">
+                      {produk.aktif === false ? "Aktifkan" : "Nonaktifkan"}
+                    </Tombol>
+                  </form>
                   <form action={hapusProduk}>
                     <input type="hidden" name="id" value={produk.id} />
                     <TombolHapus />

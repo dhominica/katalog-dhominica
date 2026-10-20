@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toko } from "@/lib/toko";
 import { formatRupiah } from "@/lib/format";
 import { tambahKeKeranjang } from "@/lib/keranjang";
+import { catatKlikWhatsApp } from "@/app/actions-publik";
 
 // US-12: pilih jumlah sebelum memesan, jumlahnya ikut tertulis di pesan WhatsApp.
 // US-21: tombol "Tambah ke keranjang".
@@ -31,6 +32,7 @@ export default function PilihPesan({ produk }) {
       <div className="flex flex-wrap gap-2">
         <a
           href={href}
+          onClick={() => catatKlikWhatsApp(produk.id)}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex w-full items-center justify-center rounded-lg bg-utama px-5 py-3 font-semibold text-white hover:bg-utama-gelap sm:w-auto"

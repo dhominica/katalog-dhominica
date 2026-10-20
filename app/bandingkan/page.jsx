@@ -18,7 +18,7 @@ export default async function HalamanBandingkan({ searchParams }) {
 
   try {
     const supabase = createServerClient();
-    const { data, error } = await supabase.from("produk").select("*").in("id", ids);
+    const { data, error } = await supabase.from("produk").select("*").in("id", ids).eq("aktif", true);
     if (!error && data) {
       daftarProduk = ids.map((id) => data.find((p) => String(p.id) === id)).filter(Boolean);
     }

@@ -21,6 +21,7 @@ export async function generateMetadata({ params }) {
       .from("produk")
       .select("nama, deskripsi, foto_url")
       .eq("id", id)
+      .eq("aktif", true)
       .maybeSingle();
 
     if (!produk) {
@@ -57,6 +58,7 @@ export default async function HalamanDetailProduk({ params }) {
       .from("produk")
       .select("*")
       .eq("id", id)
+      .eq("aktif", true)
       .maybeSingle();
 
     if (!error && data) {
@@ -69,6 +71,7 @@ export default async function HalamanDetailProduk({ params }) {
           .select("*")
           .eq("kategori", produk.kategori)
           .neq("id", id)
+          .eq("aktif", true)
           .limit(4);
 
         if (terkait) {
@@ -113,14 +116,29 @@ export default async function HalamanDetailProduk({ params }) {
           <h1 className="text-3xl font-extrabold leading-tight tracking-tight">
             {produk.nama}
           </h1>
-          <p className="self-start rounded-md bg-harga-latar px-3 py-1 text-xl font-bold text-harga">
-            {formatRupiah(produk.harga)}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            {produk.harga_coret > produk.harga && (
+              <span className="text-teks-lembut line-through">{formatRupiah(produk.harga_coret)}</span>
+            )}
+            <p className="rounded-md bg-harga-latar px-3 py-1 text-xl font-bold text-harga">
+              {formatRupiah(produk.harga)}
+            </p>
+            {produk.badge && (
+              <span className="rounded-full bg-utama px-2.5 py-0.5 text-xs font-bold text-white">{produk.badge}</span>
+            )}
+            {produk.stok <= 0 && (
+              <span className="rounded-full bg-bahaya px-2.5 py-0.5 text-xs font-bold text-white">Habis</span>
+            )}
+          </div>
           <p className="max-w-prose leading-relaxed text-teks-lembut">
             {produk.deskripsi}
           </p>
 
-          <PilihPesan produk={{ id: produk.id, nama: produk.nama, harga: produk.harga }} />
+          {produk.stok > 0 ? (
+            <PilihPesan produk={{ id: produk.id, nama: produk.nama, harga: produk.harga }} />
+          ) : (
+            <p className="text-sm font-semibold text-bahaya">Stok habis, belum bisa dipesan.</p>
+          )}
 
           {/* US-23 (Bagikan) dan US-24 (Favorit) */}
           <div className="flex flex-wrap items-center gap-3 pt-2">

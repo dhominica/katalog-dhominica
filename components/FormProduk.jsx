@@ -25,6 +25,14 @@ export default function FormProduk({ produk = {}, labelTombol }) {
         {errors.harga && <p className="text-sm text-bahaya">{errors.harga}</p>}
       </div>
       <Input label="Kategori" name="kategori" defaultValue={nilai.kategori} />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Input label="Stok" name="stok" type="number" min="0" defaultValue={nilai.stok ?? 10} />
+        <Input label="Harga normal (dicoret)" name="harga_coret" type="number" min="0" defaultValue={nilai.harga_coret ?? ""} />
+        <Input label="Badge (Baru/Terlaris)" name="badge" defaultValue={nilai.badge ?? ""} />
+      </div>
+      {(errors.stok || errors.harga_coret) && (
+        <p className="text-sm text-bahaya">{errors.stok || errors.harga_coret}</p>
+      )}
       <Input
         label="Link foto"
         name="foto_url"

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toko } from "@/lib/toko";
 import { formatRupiah } from "@/lib/format";
 import { bacaKeranjang, simpanKeranjang } from "@/lib/keranjang";
+import { catatKlikWhatsApp } from "@/app/actions-publik";
 
 // US-21: ubah jumlah, hapus item, total harga, dan kirim semua isi keranjang dalam satu pesan WhatsApp.
 export default function IsiKeranjang() {
@@ -80,6 +81,7 @@ export default function IsiKeranjang() {
       <p className="text-lg font-bold">Total: {formatRupiah(total)}</p>
       <a
         href={href}
+        onClick={() => catatKlikWhatsApp(isi.map((item) => item.id))}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex w-full items-center justify-center rounded-lg bg-utama px-5 py-3 font-semibold text-white hover:bg-utama-gelap sm:w-auto sm:self-start"

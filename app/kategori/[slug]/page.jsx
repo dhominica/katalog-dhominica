@@ -19,6 +19,7 @@ export default async function HalamanKategori({ params }) {
       .from("produk")
       .select("*")
       .ilike("kategori", namaKategori)
+      .eq("aktif", true)
       .order("id", { ascending: true });
 
     if (!error && data) {

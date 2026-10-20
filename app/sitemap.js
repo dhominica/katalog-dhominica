@@ -14,7 +14,8 @@ export default async function sitemap() {
     const supabase = createServerClient();
     const { data: produkList, error } = await supabase
       .from("produk")
-      .select("id, created_at");
+      .select("id, created_at")
+      .eq("aktif", true);
 
     if (!error && Array.isArray(produkList)) {
       produkUrls = produkList.map((produk) => ({
