@@ -132,8 +132,6 @@ Jangan ubah tampilan yang sudah ada. Jangan jalankan terminal, browser, atau git
 **Hasil:**
 AI membuat halaman /tentang (ditautkan di footer), generateMetadata di halaman detail sehingga judul dan foto produk muncul saat link dibagikan, sitemap.xml dari database dan robots.txt yang melarang /admin, serta loading skeleton di beranda dan halaman detail.
 
-Prompt bonus diberi tanda  karena worksheet bilang prompt bonus memang ditulis sendiri, nggak ada di lembar kerja.
-
 
 **Prompt:** 
 Baca AGENTS.md dan docs/user-stories.md bagian US-07, US-30, US-35. Kerjakan ketiganya:
@@ -146,3 +144,15 @@ Jangan ubah tampilan lain. Jangan jalankan terminal, browser, atau git.
 
 **Hasil:**
 Daftar produk di /admin sekarang diambil dari database, ada kartu ringkasan total produk dan jumlah per kategori, dan tombol "Ekspor CSV" yang mengunduh semua produk. Endpoint ekspor memeriksa login di server, tanpa login ditolak (401).
+
+**Prompt:**
+Baca AGENTS.md dan docs/user-stories.md bagian US-11, US-15, US-16. Ubah app/page.jsx (Server Component, baca searchParams dengan await):
+
+US-11: form GET berisi input pencarian nama (q) dan pilihan kategori (kategori). Query Supabase memakai .ilike("nama", `%q%`) dan .eq("kategori", ...) jika diisi.
+US-15: pilihan urutan (urut): terbaru (created_at desc), termurah (harga asc), termahal (harga desc), diterapkan di query .order().
+US-16: paginasi 12 produk per halaman (hal) memakai .range() dan select("*", { count: "exact" }) di query. Tampilkan tombol Sebelumnya/Berikutnya dan "Halaman X dari Y", mempertahankan q, kategori, dan urut di link.
+
+Pakai komponen Input dan Tombol yang ada, gaya sesuai DESIGN.md. Tetap pakai KartuProduk. Hanya ubah app/page.jsx. Jangan jalankan terminal, browser, atau git.
+
+**Hasil:**
+Beranda sekarang punya kotak pencarian nama produk, pilihan kategori, dan pilihan urutan (terbaru, termurah, termahal). Produk dibagi 12 per halaman dengan tombol Sebelumnya/Berikutnya dan tulisan "Halaman X dari Y". Semua penyaringan, urutan, dan pembatasan jumlah dilakukan langsung di query database (.ilike, .eq, .order, .range), bukan hanya disembunyikan di tampilan.
