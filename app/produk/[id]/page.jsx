@@ -4,9 +4,11 @@ import KartuProduk from "@/components/KartuProduk";
 import TombolWhatsApp from "@/components/TombolWhatsApp";
 import TombolBagikan from "@/components/TombolBagikan";
 import TombolFavorit from "@/components/TombolFavorit";
+import TombolBandingkan from "@/components/TombolBandingkan";
 import CatatTerakhirDilihat from "@/components/CatatTerakhirDilihat";
 import { formatRupiah } from "@/lib/format";
 import { createServerClient } from "@/lib/supabase/server";
+import { slugKategori } from "@/lib/kategori";
 
 export const dynamic = "force-dynamic";
 
@@ -100,7 +102,14 @@ export default async function HalamanDetailProduk({ params }) {
           >
             Kembali ke katalog
           </Link>
-          <p className="text-sm text-teks-lembut">{produk.kategori}</p>
+          {produk.kategori && (
+            <Link
+              href={`/kategori/${slugKategori(produk.kategori)}`}
+              className="self-start text-sm text-teks-lembut underline underline-offset-4 hover:text-utama"
+            >
+              {produk.kategori}
+            </Link>
+          )}
           <h1 className="text-3xl font-extrabold leading-tight tracking-tight">
             {produk.nama}
           </h1>
@@ -117,6 +126,7 @@ export default async function HalamanDetailProduk({ params }) {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <TombolFavorit produk={produk} />
             <TombolBagikan produk={produk} />
+            <TombolBandingkan produkId={produk.id} />
           </div>
         </div>
       </article>

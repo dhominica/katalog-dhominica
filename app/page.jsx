@@ -76,13 +76,13 @@ export default async function HalamanKatalog({ searchParams }) {
     const { data, count, error } = await query;
 
     if (error) {
-      errorPesan = error.message;
+      errorPesan = true;
     } else {
       daftarProduk = data || [];
       totalProduk = count || 0;
     }
   } catch (err) {
-    errorPesan = err.message || "Gagal memuat produk dari database.";
+    errorPesan = true;
   }
 
   const totalHalaman = Math.max(1, Math.ceil(totalProduk / ITEM_PER_HALAMAN));
@@ -172,7 +172,7 @@ export default async function HalamanKatalog({ searchParams }) {
 
         {errorPesan ? (
           <p className="rounded-xl border border-garis bg-permukaan p-4 text-sm text-bahaya">
-            Gagal memuat produk: {errorPesan}
+            Gagal memuat produk. Coba lagi nanti.
           </p>
         ) : daftarProduk.length === 0 ? (
           <p className="text-teks-lembut">

@@ -13,11 +13,15 @@ export default async function HalamanLogin({ searchParams }) {
         <p className="mt-1 text-sm text-teks-lembut">Khusus pemilik toko untuk mengelola produk.</p>
       </div>
 
-      {adaError && (
+      {params?.error === "terlalu-banyak" ? (
+        <p className="rounded-lg border border-garis bg-permukaan px-3 py-2 text-sm text-bahaya">
+          Terlalu banyak percobaan, coba lagi 15 menit lagi.
+        </p>
+      ) : adaError ? (
         <p className="rounded-lg border border-garis bg-permukaan px-3 py-2 text-sm text-bahaya">
           Email atau password salah.
         </p>
-      )}
+      ) : null}
 
       <form action={login} className="flex flex-col gap-4">
         <Input label="Email" name="email" type="email" autoComplete="email" required />

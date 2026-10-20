@@ -172,3 +172,23 @@ Jangan ubah fitur lain. Jangan jalankan terminal, browser, atau git.
 
 **Hasil:**
 Ditambahkan mode gelap dengan tombol di header yang pilihannya diingat di localStorage, tombol bagikan/salin link di halaman detail, bagian "Produk terkait" dari kategori yang sama (diambil dari database di server), tombol favorit dengan halaman /favorit, dan bagian "Terakhir dilihat" di beranda. Fitur favorit, terakhir dilihat, dan tema disimpan di localStorage browser sehingga komponennya memakai "use client", tanpa Supabase di dalamnya.
+
+### Keamanan K-6, K-7, K-8, K-9, K-12, K-13
+
+**Prompt:** [SENDIRI]
+Baca AGENTS.md. Kerjakan pemeriksaan keamanan berikut tanpa mengubah tampilan: K-6 header keamanan di next.config.mjs (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, Strict-Transport-Security). K-7 hapus dangerouslySetInnerHTML/eval, script tema dipindah ke public/tema.js. K-8 X-Robots-Tag noindex untuk /admin dan app/admin/layout.jsx dengan metadata robots noindex. K-9 app/error.jsx dengan pesan umum tanpa error.message/stack, dan pesan error umum di beranda. K-12 rate limit login 5 percobaan per 15 menit per IP. K-13 hapus semua console.log. Jangan jalankan terminal, browser, atau git.
+
+**Hasil:**
+Ditambahkan header keamanan, script tema dipindah ke public/tema.js sehingga tidak ada dangerouslySetInnerHTML, halaman /admin diberi noindex, halaman error umum tanpa detail teknis, batas 5 percobaan login per 15 menit, dan tidak ada console.log.
+
+### Keamanan K-10
+
+[SENDIRI] Saya menjalankan npm audit di terminal, hasilnya: found 0 vulnerabilities.
+
+### Bonus US-13, US-37, US-49 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Antigravity sedang lambat/macet, jadi saya memakai AI cadangan (Claude Code) dengan permintaan: buat web app manifest (US-13) memakai ikon di public/icons, halaman /kategori/[slug] yang menampilkan produk per kategori dari database dengan "tidak ditemukan" untuk kategori yang tidak ada dan tautan kategori di halaman detail (US-49), serta fitur bandingkan 2 produk (US-37) dengan pilihan maksimal 2 di browser dan halaman /bandingkan berdampingan.
+
+**Hasil:**
+app/manifest.js otomatis ditautkan di halaman sehingga katalog bisa di-install ke HP. Halaman /kategori/minuman dan sejenisnya menampilkan produk kategori itu, kategori yang tidak ada menampilkan "Halaman tidak ditemukan", dan nama kategori di halaman detail bisa diklik. Di halaman detail ada tombol "Bandingkan (x/2)"; pilihan ketiga menggantikan pilihan paling lama dengan pesan, dan /bandingkan?a=..&b=.. menampilkan foto, kategori, harga, dan deskripsi berdampingan. Produk yang tidak ada menampilkan "tidak ditemukan".
