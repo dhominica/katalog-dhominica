@@ -188,7 +188,7 @@ Ditambahkan header keamanan, script tema dipindah ke public/tema.js sehingga tid
 ### Bonus US-13, US-37, US-49 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Antigravity sedang lambat/macet, jadi saya memakai AI cadangan (Claude Code) dengan permintaan: buat web app manifest (US-13) memakai ikon di public/icons, halaman /kategori/[slug] yang menampilkan produk per kategori dari database dengan "tidak ditemukan" untuk kategori yang tidak ada dan tautan kategori di halaman detail (US-49), serta fitur bandingkan 2 produk (US-37) dengan pilihan maksimal 2 di browser dan halaman /bandingkan berdampingan.
+ buat web app manifest (US-13) memakai ikon di public/icons, halaman /kategori/[slug] yang menampilkan produk per kategori dari database dengan "tidak ditemukan" untuk kategori yang tidak ada dan tautan kategori di halaman detail (US-49), serta fitur bandingkan 2 produk (US-37) dengan pilihan maksimal 2 di browser dan halaman /bandingkan berdampingan.
 
 **Hasil:**
 app/manifest.js otomatis ditautkan di halaman sehingga katalog bisa di-install ke HP. Halaman /kategori/minuman dan sejenisnya menampilkan produk kategori itu, kategori yang tidak ada menampilkan "Halaman tidak ditemukan", dan nama kategori di halaman detail bisa diklik. Di halaman detail ada tombol "Bandingkan (x/2)"; pilihan ketiga menggantikan pilihan paling lama dengan pesan, dan /bandingkan?a=..&b=.. menampilkan foto, kategori, harga, dan deskripsi berdampingan. Produk yang tidak ada menampilkan "tidak ditemukan".
@@ -196,7 +196,15 @@ app/manifest.js otomatis ditautkan di halaman sehingga katalog bisa di-install k
 ### Bonus US-08, US-09, US-10, US-34 (dikerjakan dengan AI cadangan)
 
 **Prompt:** [SENDIRI]
-Antigravity lambat, jadi saya memakai AI cadangan (Claude Code) dengan permintaan: buat tambah, ubah, dan hapus produk di halaman admin. Setiap aksi wajib cek login di server, validasi di server (nama wajib, harga angka positif) dengan pesan error per field tanpa menghapus isian, form ubah terisi data lama dari database, dan tombol hapus meminta konfirmasi.
+buat tambah, ubah, dan hapus produk di halaman admin. Setiap aksi wajib cek login di server, validasi di server (nama wajib, harga angka positif) dengan pesan error per field tanpa menghapus isian, form ubah terisi data lama dari database, dan tombol hapus meminta konfirmasi.
 
 **Hasil:**
 Di app/admin/actions.js ditambahkan simpanProduk (insert jika baru, update jika ada id) dan hapusProduk, keduanya memanggil wajibLogin() sehingga tanpa login ditolak server. FormProduk memakai useActionState sehingga pesan error tampil di bawah field yang salah dan isian tidak hilang. Halaman ubah mengambil data lama dari Supabase, dan tombol Hapus menampilkan konfirmasi "Hapus produk ini?". Setelah simpan atau hapus, halaman kembali ke /admin.
+
+### Bonus US-12, US-21, US-33, US-46 (dikerjakan dengan AI cadangan)
+
+**Prompt:** [SENDIRI]
+Dengan AI cadangan (Claude Code) karena Antigravity lambat: tambahkan pilihan jumlah di halaman detail yang ikut tertulis di pesan WhatsApp (US-12), keranjang di browser dengan ubah jumlah, hapus item, total, dan satu tombol kirim semua via WhatsApp (US-21), kolom cari dan paginasi di /admin lewat query database dengan kata kunci dan halaman di URL (US-33), serta impor produk dari CSV dengan validasi per baris, laporan nomor baris yang salah, dan ringkasan hasil (US-46).
+
+**Hasil:**
+Halaman detail punya input jumlah dan total; pesan WhatsApp memuat jumlah. Tombol "Tambah ke keranjang" menyimpan ke localStorage, halaman /keranjang bisa mengubah jumlah, menghapus item, menghitung total, dan mengirim semua isi dalam satu pesan WhatsApp. /admin punya pencarian (.ilike) dan paginasi (.range) dengan ?q= dan ?hal= di URL. /admin/impor menerima CSV, setiap baris dicek (nama wajib, harga angka positif), baris yang salah dilaporkan dengan nomor barisnya, baris valid disimpan sekaligus, lalu ringkasan berhasil/gagal ditampilkan. Semua aksi admin memeriksa login di server.

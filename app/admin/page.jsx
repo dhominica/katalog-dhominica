@@ -5,29 +5,52 @@ import { createServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function HalamanAdmin() {
+const PER_HALAMAN = 10;
+
+export default async function HalamanAdmin({ searchParams }) {
+  const sp = await searchParams;
+  // US-33: kata kunci dan nomor halaman disimpan di URL.
+  const q = typeof sp?.q === "string" ? sp.q.trim() : "";
+  const hal = Math.max(1, parseInt(sp?.hal, 10) || 1);
+
   let daftarProduk = [];
+  let totalCocok = 0;
+  let semuaKategori = [];
 
   try {
     const supabase = createServerClient();
-    const { data, error } = await supabase
+
+    // US-30: ringkasan dihitung dari seluruh produk.
+    const { data: ringkas } = await supabase.from("produk").select("kategori");
+    semuaKategori = ringkas || [];
+
+    // US-33: pencarian dan paginasi dilakukan di query database.
+    let query = supabase
       .from("produk")
-      .select("*")
-      .order("id", { ascending: true });
+      .select("*", { count: "exact" })
+      .order("id", { ascending: true })
+      .range((hal - 1) * PER_HALAMAN, hal * PER_HALAMAN - 1);
+    if (q) {
+      query = query.ilike("nama", `%${q}%`);
+    }
+    const { data, count, error } = await query;
 
     if (!error && data) {
       daftarProduk = data;
+      totalCocok = count || 0;
     }
-  } catch (err) {
-    // Tangani jika terjadi error koneksi
+  } catch {
+    // Koneksi gagal: tabel tampil kosong.
   }
 
-  // Hitung jumlah produk per kategori
-  const kategoriCount = daftarProduk.reduce((acc, produk) => {
+  const kategoriCount = semuaKategori.reduce((acc, produk) => {
     const kat = produk.kategori || "Tanpa kategori";
     acc[kat] = (acc[kat] || 0) + 1;
     return acc;
   }, {});
+
+  const totalHalaman = Math.max(1, Math.ceil(totalCocok / PER_HALAMAN));
+  const linkHalaman = (n) => `/admin?${new URLSearchParams({ ...(q ? { q } : {}), hal: String(n) })}`;
 
   return (
     <div className="flex flex-col gap-6 py-8">
@@ -41,7 +64,9 @@ export default async function HalamanAdmin() {
           >
             Ekspor CSV
           </a>
-          {/* US-08 (bonus): tambah produk */}
+          <Tombol href="/admin/impor" varian="garis">
+            Impor CSV
+          </Tombol>
           <Tombol href="/admin/produk/baru">Tambah produk</Tombol>
         </div>
       </div>
@@ -50,7 +75,7 @@ export default async function HalamanAdmin() {
       <section aria-label="Ringkasan produk" className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <div className="rounded-2xl border border-garis bg-latar p-4">
           <p className="text-xs font-semibold text-teks-lembut">Total produk</p>
-          <p className="mt-1 text-2xl font-extrabold text-teks">{daftarProduk.length}</p>
+          <p className="mt-1 text-2xl font-extrabold text-teks">{semuaKategori.length}</p>
         </div>
         {Object.entries(kategoriCount).map(([kategori, jumlah]) => (
           <div key={kategori} className="rounded-2xl border border-garis bg-latar p-4">
@@ -60,7 +85,37 @@ export default async function HalamanAdmin() {
         ))}
       </section>
 
-      <TabelProduk daftarProduk={daftarProduk} />
+      <form method="GET" action="/admin" className="flex max-w-md gap-2">
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Cari nama produk"
+          className="w-full rounded-lg border border-garis bg-latar px-3 py-2.5 text-base text-teks placeholder:text-teks-lembut focus:border-utama focus:outline-none"
+        />
+        <Tombol type="submit">Cari</Tombol>
+      </form>
+
+      {daftarProduk.length === 0 ? (
+        <p className="text-teks-lembut">Tidak ada produk yang cocok.</p>
+      ) : (
+        <TabelProduk daftarProduk={daftarProduk} />
+      )}
+
+      <nav aria-label="Halaman" className="flex items-center gap-3 text-sm">
+        {hal > 1 && (
+          <Tombol href={linkHalaman(hal - 1)} varian="garis">
+            Sebelumnya
+          </Tombol>
+        )}
+        <span className="text-teks-lembut">
+          Halaman {hal} dari {totalHalaman}
+        </span>
+        {hal < totalHalaman && (
+          <Tombol href={linkHalaman(hal + 1)} varian="garis">
+            Berikutnya
+          </Tombol>
+        )}
+      </nav>
     </div>
   );
 }

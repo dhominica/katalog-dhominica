@@ -16,6 +16,12 @@ export default function Header() {
           >
             Favorit
           </Link>
+          <Link
+            href="/keranjang"
+            className="text-sm font-semibold text-teks-lembut transition-colors hover:text-utama"
+          >
+            Keranjang
+          </Link>
           <TombolTema />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import KartuProduk from "@/components/KartuProduk";
-import TombolWhatsApp from "@/components/TombolWhatsApp";
+import PilihPesan from "@/components/PilihPesan";
 import TombolBagikan from "@/components/TombolBagikan";
 import TombolFavorit from "@/components/TombolFavorit";
 import TombolBandingkan from "@/components/TombolBandingkan";
@@ -120,7 +120,7 @@ export default async function HalamanDetailProduk({ params }) {
             {produk.deskripsi}
           </p>
 
-          <TombolWhatsApp produk={produk} />
+          <PilihPesan produk={{ id: produk.id, nama: produk.nama, harga: produk.harga }} />
 
           {/* US-23 (Bagikan) dan US-24 (Favorit) */}
           <div className="flex flex-wrap items-center gap-3 pt-2">

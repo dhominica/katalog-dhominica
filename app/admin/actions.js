@@ -171,3 +171,84 @@ export async function hapusProduk(formData) {
   revalidatePath("/");
   redirect("/admin");
 }
+
+// Pecah satu baris CSV, mendukung nilai dalam kutip ganda dan kutip yang digandakan.
+function pecahBarisCsv(baris) {
+  const hasil = [];
+  let nilai = "";
+  let dalamKutip = false;
+  for (let i = 0; i < baris.length; i++) {
+    const c = baris[i];
+    if (dalamKutip) {
+      if (c === '"' && baris[i + 1] === '"') {
+        nilai += '"';
+        i++;
+      } else if (c === '"') {
+        dalamKutip = false;
+      } else {
+        nilai += c;
+      }
+    } else if (c === '"') {
+      dalamKutip = true;
+    } else if (c === ",") {
+      hasil.push(nilai);
+      nilai = "";
+    } else {
+      nilai += c;
+    }
+  }
+  hasil.push(nilai);
+  return hasil.map((v) => v.trim());
+}
+
+// US-46: impor produk dari CSV. Setiap baris divalidasi, baris valid disimpan sekaligus.
+export async function imporProduk(prevState, formData) {
+  await wajibLogin();
+
+  const berkas = formData.get("berkas");
+  if (!berkas || typeof berkas.text !== "function" || berkas.size === 0) {
+    return { pesan: "Pilih file CSV terlebih dahulu." };
+  }
+
+  const baris = (await berkas.text()).replace(/^﻿/, "").split(/\r?\n/);
+  const header = pecahBarisCsv(baris[0] || "").map((h) => h.toLowerCase());
+  if (!header.includes("nama") || !header.includes("harga")) {
+    return { pesan: "Header CSV wajib memuat kolom nama dan harga." };
+  }
+
+  const valid = [];
+  const kesalahan = [];
+  for (let i = 1; i < baris.length; i++) {
+    if (!baris[i].trim()) continue;
+    const kolom = pecahBarisCsv(baris[i]);
+    const ambil = (nama) => kolom[header.indexOf(nama)] ?? "";
+    const nama = ambil("nama");
+    const harga = Number(ambil("harga"));
+
+    if (!nama) {
+      kesalahan.push({ baris: i + 1, alasan: "nama wajib diisi" });
+    } else if (!Number.isInteger(harga) || harga <= 0) {
+      kesalahan.push({ baris: i + 1, alasan: "harga harus angka bulat lebih dari 0" });
+    } else {
+      valid.push({
+        nama,
+        harga,
+        kategori: ambil("kategori") || null,
+        deskripsi: ambil("deskripsi") || null,
+        foto_url: ambil("foto_url") || null,
+      });
+    }
+  }
+
+  if (valid.length > 0) {
+    const supabase = createServerClient();
+    const { error } = await supabase.from("produk").insert(valid);
+    if (error) {
+      return { pesan: "Gagal menyimpan ke database. Coba lagi." };
+    }
+    revalidatePath("/admin");
+    revalidatePath("/");
+  }
+
+  return { ringkasan: { berhasil: valid.length, gagal: kesalahan.length }, kesalahan };
+}
